@@ -47,15 +47,15 @@ def get_vectorstore():
     # Use DuckDB+Parquet to avoid SQLite version issues
     embedder = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
     PERSIST_DIR.mkdir(parents=True, exist_ok=True)
-    client_settings = Settings(
-        chroma_db_impl="duckdb+parquet",
-        persist_directory=str(PERSIST_DIR)
-    )
+    # client_settings = Settings(
+    #     chroma_db_impl="duckdb+parquet",
+    #     persist_directory=str(PERSIST_DIR)
+    # )
     return Chroma(
         persist_directory=str(PERSIST_DIR),
         embedding_function=embedder,
         collection_name="multi_tenant_docs",
-        client_settings=client_settings,
+        # client_settings=client_settings,
     )
 
 # --- Pages ---
