@@ -13,6 +13,7 @@ import shutil
 import chromadb
 
 
+
 # Load environment variables
 def load_env():
     load_dotenv()
@@ -43,7 +44,9 @@ def get_vectorstore():
     store = Chroma(
         persist_directory=str(PERSIST_DIR),
         embedding_function=embedder,
-        collection_name="multi_tenant_docs"
+        collection_name="multi_tenant_docs",
+        client_settings = Settings(
+        chroma_db_impl="duckdb+parquet",
     )
     return store
 
