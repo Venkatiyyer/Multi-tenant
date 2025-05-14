@@ -1,4 +1,4 @@
-#chromadb[duckdb]         # <= duckdb+parquet storage
+chromadb[duckdb]         # <= duckdb+parquet storage
 pysqlite3-binary         # Provides sqlite3 ≥ 3.35.0 for Python
 chroma
 langchain-groq
