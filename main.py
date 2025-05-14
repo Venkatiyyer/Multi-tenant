@@ -10,7 +10,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
 from langchain_groq import ChatGroq
 import shutil
-import chromadb
+# import chromadb
 
 
 
@@ -37,18 +37,21 @@ for key in ["authenticated", "company_id", "username"]:
         st.session_state[key] = False if key == "authenticated" else ""
 
 # --- Shared multitenant store loader using Chroma ---
+# --- Shared multitenant store loader using Chroma ---
 def get_vectorstore():
+    # Use DuckDB+Parquet to avoid SQLite version issues
     embedder = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
-    # Ensure persistence directory exists
     PERSIST_DIR.mkdir(parents=True, exist_ok=True)
-    store = Chroma(
+    client_settings = Settings(
+        chroma_db_impl="duckdb+parquet",
+        persist_directory=str(PERSIST_DIR)
+    )
+    return Chroma(
         persist_directory=str(PERSIST_DIR),
         embedding_function=embedder,
         collection_name="multi_tenant_docs",
-        client_settings = Settings(
-        chroma_db_impl="duckdb+parquet"),
+        client_settings=client_settings,
     )
-    return store
 
 # --- Pages ---
 def page_login():
