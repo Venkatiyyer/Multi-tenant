@@ -1,4 +1,4 @@
-chromadb
+chromadb[duckdb]         # <= duckdb+parquet storage
 # chroma
 langchain-groq
 PyPDF2
