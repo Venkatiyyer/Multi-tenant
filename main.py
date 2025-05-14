@@ -1,3 +1,8 @@
+# --- Monkey-patch Python's sqlite3 to use pysqlite3's newer build ---
+import pysqlite3
+import sys
+sys.modules['sqlite3'] = pysqlite3
+
 import streamlit as st
 import os
 from pathlib import Path
