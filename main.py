@@ -46,7 +46,7 @@ def get_vectorstore():
         embedding_function=embedder,
         collection_name="multi_tenant_docs",
         client_settings = Settings(
-        chroma_db_impl="duckdb+parquet",
+        chroma_db_impl="duckdb+parquet"),
     )
     return store
 
