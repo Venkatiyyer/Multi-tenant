@@ -1,5 +1,6 @@
 chromadb[duckdb]         # <= duckdb+parquet storage
-# chroma
+chromadb==0.3.33
+chroma
 langchain-groq
 PyPDF2
 langchain_google_genai
