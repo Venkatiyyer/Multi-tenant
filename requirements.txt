@@ -1,5 +1,5 @@
-chromadb[duckdb]         # <= duckdb+parquet storage
-chromadb==0.3.33
+#chromadb[duckdb]         # <= duckdb+parquet storage
+pysqlite3-binary         # Provides sqlite3 ≥ 3.35.0 for Python
 chroma
 langchain-groq
 PyPDF2
