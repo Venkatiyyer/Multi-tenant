@@ -42,7 +42,6 @@ for key in ["authenticated", "company_id", "username"]:
         st.session_state[key] = False if key == "authenticated" else ""
 
 # --- Shared multitenant store loader using Chroma ---
-# --- Shared multitenant store loader using Chroma ---
 def get_vectorstore():
     # Use DuckDB+Parquet to avoid SQLite version issues
     embedder = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
