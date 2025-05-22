@@ -86,9 +86,9 @@ def page_upload():
     # Delete vector store button
     # Delete entire /tmp directory (DANGEROUS - use only if you understand the impact)
 
-     if st.button("🧹 Clear Chroma vector, metadata & index files only"):
+    if st.button("🧹 Clear Chroma vector, metadata & index files only"):
         chroma_data_dir = PERSIST_DIR  # Correct usage of defined constant
-
+    
         # Files to delete directly under shared_chroma/
         top_level_files = [
             "chroma.sqlite3",
@@ -97,9 +97,9 @@ def page_upload():
             "chroma-embeddings.parquet",
             "chroma-collections.parquet",
         ]
-
+    
         deleted_any = False
-
+    
         for filename in top_level_files:
             file_path = chroma_data_dir / filename
             if file_path.exists():
@@ -108,7 +108,7 @@ def page_upload():
                     deleted_any = True
                 except Exception as e:
                     st.warning(f"Failed to delete {filename}: {e}")
-
+    
         # Also delete all files inside the index folder for this collection
         index_dir = chroma_data_dir / "index" / "multi_tenant_docs"
         if index_dir.exists():
@@ -119,7 +119,7 @@ def page_upload():
                         deleted_any = True
                     except Exception as e:
                         st.warning(f"Could not delete index file {file.name}: {e}")
-
+    
         if deleted_any:
             st.success("Chroma vector, metadata, and index files have been deleted.")
         else:
