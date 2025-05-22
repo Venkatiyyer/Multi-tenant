@@ -78,7 +78,7 @@ def page_upload():
         return
 
     # Truncate collection button - separate from file upload
-    if st.button("🧹 Clear multi_tenant_docs collection (truncate)"):
+    if st.button("🧹 Clear all data"):
         try:
             store = get_vectorstore()
             collection = store._client.get_collection(name="multi_tenant_docs")
@@ -97,33 +97,7 @@ def page_upload():
         except Exception as e:
             st.error(f"Failed to truncate collection: {e}")
 
-    # # File uploader - OUTSIDE the button block
-    # file = st.file_uploader("Upload PDF or TXT", type=["pdf", "txt"])
-    # if not file:
-    #     return
-
-    # comp = st.session_state.company_id
-    # data_dir = Path(f"data/{comp}")
-    # data_dir.mkdir(parents=True, exist_ok=True)
-    # path = data_dir / file.name
-    # path.write_bytes(file.read())
-    # st.success(f"Saved {file.name} for {comp}")
-
-    # # Load & split
-    # loader = PyPDFLoader(str(path)) if path.suffix == ".pdf" else TextLoader(str(path))
-    # docs = loader.load()
-    # splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-    # chunks = splitter.split_documents(docs)
-
-    # texts = [chunk.page_content for chunk in chunks]
-    # metadatas = [{**chunk.metadata, "company": comp} for chunk in chunks]
-
-    # # Add to Chroma
-    # store = get_vectorstore()
-    # store.add_texts(texts=texts, metadatas=metadatas)
-    # store.persist()
-
-    # st.success("Indexed to shared Chroma store with metadata!")
+    
 
     
     
