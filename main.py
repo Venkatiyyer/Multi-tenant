@@ -92,7 +92,9 @@ def page_upload():
         except Exception as e:
             st.error(f"Failed to delete collection: {e}")
 
-
+     file = st.file_uploader("Upload PDF or TXT", type=["pdf", "txt"])
+    if not file:
+        return
 
 
     comp = st.session_state.company_id
