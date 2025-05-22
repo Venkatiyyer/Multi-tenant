@@ -88,7 +88,7 @@ def page_upload():
         if target_dir.exists():
             for item in target_dir.iterdir():
                 try:
-                    if item.is_file() and item.suffix in {".parquet", ".db"}::
+                    if item.is_file() and item.suffix in {".parquet", ".db"}:
                         item.unlink()
                 except Exception as e:
                     st.warning(f"Could not delete {item.name}: {e}")
