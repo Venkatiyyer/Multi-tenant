@@ -73,7 +73,6 @@ def page_login():
             else:
                 st.error("Invalid Company ID, Username or Password.")
 
-
 def page_upload():
     st.title("Upload Documents")
     if not st.session_state.authenticated:
@@ -82,10 +81,9 @@ def page_upload():
     if st.session_state.username != "uploader":
         st.error("Only uploader can upload files.")
         return
-    
-    # Delete vector store button
+
     # Delete entire /tmp directory (DANGEROUS - use only if you understand the impact)
-if st.button("⚠️ Clear entire /tmp directory"):
+    if st.button("⚠️ Clear entire /tmp directory"):
         tmp_dir = Path("/tmp")
         for item in tmp_dir.iterdir():
             try:
@@ -100,6 +98,7 @@ if st.button("⚠️ Clear entire /tmp directory"):
     file = st.file_uploader("Upload PDF or TXT", type=["pdf", "txt"])
     if not file:
         return
+
 
 
     comp = st.session_state.company_id
