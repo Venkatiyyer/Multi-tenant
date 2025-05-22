@@ -102,10 +102,6 @@ if st.button("⚠️ Clear entire /tmp directory"):
         return
 
 
-    file = st.file_uploader("Upload PDF or TXT", type=["pdf","txt"])
-    if not file:
-        return
-
     comp = st.session_state.company_id
     data_dir = Path(f"data/{comp}")
     data_dir.mkdir(parents=True, exist_ok=True)
