@@ -82,9 +82,9 @@ def page_upload():
         st.error("Only uploader can upload files.")
         return
 
-    #  # Extract company ID early
-    # comp = st.session_state.company_id
-    
+    # Extract company ID early
+    comp = st.session_state.company_id
+
     # Delete only the "multi_tenant_docs" collection from Chroma
     if st.button("⚠️ Delete multi_tenant_docs collection"):
         try:
@@ -94,15 +94,14 @@ def page_upload():
         except Exception as e:
             st.error(f"Failed to delete collection: {e}")
 
-     file = st.file_uploader("Upload PDF or TXT", type=["pdf", "txt"])
+    # Upload file
+    file = st.file_uploader("Upload PDF or TXT", type=["pdf", "txt"])
     if not file:
         return
 
-
-    # comp = st.session_state.company_id
     data_dir = Path(f"data/{comp}")
     data_dir.mkdir(parents=True, exist_ok=True)
-    path = data_dir/file.name
+    path = data_dir / file.name
     path.write_bytes(file.read())
     st.success(f"Saved {file.name} for {comp}")
 
@@ -121,6 +120,7 @@ def page_upload():
     store.persist()
 
     st.success("Indexed to shared Chroma store with metadata!")
+
 
 
 def page_query():
