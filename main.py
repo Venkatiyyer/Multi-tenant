@@ -84,12 +84,12 @@ def page_upload():
 
      #Delete only files in /tmp/vectorstores/shared_chroma
     if st.button("⚠️ Reset shared Chroma vector store"):
-    try:
-        store = get_vectorstore()
-        store._client.reset()  # This clears all collections and persistent storage
-        st.success("Chroma vector store has been reset.")
-    except Exception as e:
-        st.error(f"Failed to reset Chroma vector store: {e}")
+        try:
+            store = get_vectorstore()
+            store._client.reset()  # This clears all collections and persistent storage
+            st.success("Chroma vector store has been reset.")
+        except Exception as e:
+            st.error(f"Failed to reset Chroma vector store: {e}")
 
     file = st.file_uploader("Upload PDF or TXT", type=["pdf", "txt"])
     if not file:
