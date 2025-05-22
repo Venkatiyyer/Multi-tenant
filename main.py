@@ -86,16 +86,20 @@ def page_upload():
     # Delete vector store button
     # Delete entire /tmp directory (DANGEROUS - use only if you understand the impact)
 if st.button("⚠️ Clear entire /tmp directory"):
-    tmp_dir = Path("/tmp")
-    for item in tmp_dir.iterdir():
-        try:
-            if item.is_file() or item.is_symlink():
-                item.unlink()
-            elif item.is_dir():
-                shutil.rmtree(item, ignore_errors=True)
-        except Exception as e:
-            st.warning(f"Could not delete {item}: {e}")
-    st.success("/tmp directory has been cleared.")
+        tmp_dir = Path("/tmp")
+        for item in tmp_dir.iterdir():
+            try:
+                if item.is_file() or item.is_symlink():
+                    item.unlink()
+                elif item.is_dir():
+                    shutil.rmtree(item, ignore_errors=True)
+            except Exception as e:
+                st.warning(f"Could not delete {item}: {e}")
+        st.success("/tmp directory has been cleared.")
+
+    file = st.file_uploader("Upload PDF or TXT", type=["pdf", "txt"])
+    if not file:
+        return
 
 
     file = st.file_uploader("Upload PDF or TXT", type=["pdf","txt"])
