@@ -87,7 +87,7 @@ def page_upload():
     # Delete entire /tmp directory (DANGEROUS - use only if you understand the impact)
 
     if st.button("🧹 Clear Chroma vector, metadata & index files only"):
-    chroma_data_dir = Path("/tmp/vectorstores/shared_chroma")
+    # chroma_data_dir = Path("/tmp/vectorstores/shared_chroma")
     
     # Files to delete directly under shared_chroma/
     top_level_files = [
@@ -110,7 +110,7 @@ def page_upload():
                 st.warning(f"Failed to delete {filename}: {e}")
 
     # Also delete all files inside the index folder for this collection
-    index_dir = chroma_data_dir / "index" / "multi_tenant_docs"
+    index_dir = PERSIST / "index" / "multi_tenant_docs"
     if index_dir.exists():
         for file in index_dir.glob("*"):
             if file.is_file():
