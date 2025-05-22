@@ -51,7 +51,8 @@ def get_vectorstore():
     #     persist_directory=str(PERSIST_DIR)
     # )
     return Chroma(
-        persist_directory=str(PERSIST_DIR),
+        persist_directory=str(PERSIST_DIR),    
+        
         embedding_function=embedder,
         collection_name="multi_tenant_docs",
         # client_settings=client_settings,
@@ -83,11 +84,19 @@ def page_upload():
         return
     
     # Delete vector store button
-    if st.button("⚠️ Clear entire vector store"):
-        # Remove the persistence directory and reinitialize
-        shutil.rmtree(PERSIST_DIR, ignore_errors=True)
-        PERSIST_DIR.mkdir(parents=True, exist_ok=True)
-        st.success("Vector store has been cleared.")
+    # Delete entire /tmp directory (DANGEROUS - use only if you understand the impact)
+if st.button("⚠️ Clear entire /tmp directory"):
+    tmp_dir = Path("/tmp")
+    for item in tmp_dir.iterdir():
+        try:
+            if item.is_file() or item.is_symlink():
+                item.unlink()
+            elif item.is_dir():
+                shutil.rmtree(item, ignore_errors=True)
+        except Exception as e:
+            st.warning(f"Could not delete {item}: {e}")
+    st.success("/tmp directory has been cleared.")
+
 
     file = st.file_uploader("Upload PDF or TXT", type=["pdf","txt"])
     if not file:
