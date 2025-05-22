@@ -33,7 +33,7 @@ CREDENTIALS = {
 }
 
 # --- Paths & Models ---
-PERSIST_DIR = Path("vectorstores/shared_chroma")
+PERSIST_DIR = Path("/tmp/vectorstores/shared_chroma")
 EMBEDDING_MODEL = "sentence-transformers/paraphrase-mpnet-base-v2"
 
 # --- Session state init ---
