@@ -82,7 +82,9 @@ def page_upload():
         st.error("Only uploader can upload files.")
         return
 
-     #Delete only files in /tmp/vectorstores/shared_chroma
+     # Extract company ID early
+    comp = st.session_state.company_id
+    
     # Delete only the "multi_tenant_docs" collection from Chroma
     if st.button("⚠️ Delete multi_tenant_docs collection"):
         try:
@@ -97,7 +99,7 @@ def page_upload():
         return
 
 
-    comp = st.session_state.company_id
+    # comp = st.session_state.company_id
     data_dir = Path(f"data/{comp}")
     data_dir.mkdir(parents=True, exist_ok=True)
     path = data_dir/file.name
