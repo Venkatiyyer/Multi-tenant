@@ -73,6 +73,7 @@ def page_login():
             else:
                 st.error("Invalid Company ID, Username or Password.")
 
+
 def page_upload():
     st.title("Upload Documents")
     if not st.session_state.authenticated:
@@ -81,27 +82,30 @@ def page_upload():
     if st.session_state.username != "uploader":
         st.error("Only uploader can upload files.")
         return
+    
+    # Delete vector store button
+    # Delete entire /tmp directory (DANGEROUS - use only if you understand the impact)
+# if st.button("⚠️ Clear entire /tmp directory"):
+#     tmp_dir = Path("/tmp")
+#     for item in tmp_dir.iterdir():
+#         try:
+#             if item.is_file() or item.is_symlink():
+#                 item.unlink()
+#             elif item.is_dir():
+#                 shutil.rmtree(item, ignore_errors=True)
+#         except Exception as e:
+#             st.warning(f"Could not delete {item}: {e}")
+#     st.success("/tmp directory has been cleared.")
 
-    # Extract company ID early
-    comp = st.session_state.company_id
 
-    # Delete only the "multi_tenant_docs" collection from Chroma
-    if st.button("⚠️ Delete multi_tenant_docs collection"):
-        try:
-            store = get_vectorstore()
-            store._client.delete_collection("multi_tenant_docs")
-            st.success("Chroma collection 'multi_tenant_docs' has been deleted.")
-        except Exception as e:
-            st.error(f"Failed to delete collection: {e}")
-
-    # Upload file
-    file = st.file_uploader("Upload PDF or TXT", type=["pdf", "txt"])
+    file = st.file_uploader("Upload PDF or TXT", type=["pdf","txt"])
     if not file:
         return
 
+    comp = st.session_state.company_id
     data_dir = Path(f"data/{comp}")
     data_dir.mkdir(parents=True, exist_ok=True)
-    path = data_dir / file.name
+    path = data_dir/file.name
     path.write_bytes(file.read())
     st.success(f"Saved {file.name} for {comp}")
 
@@ -120,7 +124,6 @@ def page_upload():
     store.persist()
 
     st.success("Indexed to shared Chroma store with metadata!")
-
 
 
 def page_query():
