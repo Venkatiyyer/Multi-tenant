@@ -78,78 +78,56 @@ def page_upload():
         st.error("Only uploader can upload files.")
         return
     
-    # Delete vector store button
-    if st.button("🧹 Clear Chroma vector, metadata & index files only"):
-    chroma_data_dir = PERSIST_DIR  # Your official path
-
-    top_level_files = [
-        "chroma.sqlite3",
-        "chroma.sqlite3-wal",
-        "chroma.sqlite3-shm",
-        "chroma-embeddings.parquet",
-        "chroma-collections.parquet",
-    ]
-
-    deleted_any = False
-
-    for filename in top_level_files:
-        file_path = chroma_data_dir / filename
-        if file_path.exists():
-            try:
-                file_path.unlink()
-                deleted_any = True
-            except Exception as e:
-                st.warning(f"Failed to delete {filename}: {e}")
-
-    # Delete all files inside the index folder
-    index_dir = chroma_data_dir / "index" / "multi_tenant_docs"
-    if index_dir.exists():
-        for file in index_dir.glob("*"):
-            if file.is_file():
-                try:
-                    file.unlink()
-                    deleted_any = True
-                except Exception as e:
-                    st.warning(f"Could not delete index file {file.name}: {e}")
-
-    # ⚠️ Manually clear in-memory Chroma store (workaround)
-    if "vectorstore" in st.session_state:
-        del st.session_state["vectorstore"]
-
-    if deleted_any:
-        st.success("Chroma vector, metadata, and index files deleted.")
-    else:
-        st.info("No relevant Chroma files found to delete.")
-
-
-
-
-    file = st.file_uploader("Upload PDF or TXT", type=["pdf","txt"])
-    if not file:
-        return
-
-    comp = st.session_state.company_id
-    data_dir = Path(f"data/{comp}")
-    data_dir.mkdir(parents=True, exist_ok=True)
-    path = data_dir/file.name
-    path.write_bytes(file.read())
-    st.success(f"Saved {file.name} for {comp}")
-
-    # Load & split
-    loader = PyPDFLoader(str(path)) if path.suffix == ".pdf" else TextLoader(str(path))
-    docs = loader.load()
-    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-    chunks = splitter.split_documents(docs)
-
-    texts = [chunk.page_content for chunk in chunks]
-    metadatas = [{**chunk.metadata, "company": comp} for chunk in chunks]
-
-    # Add to Chroma
-    store = get_vectorstore()
-    store.add_texts(texts=texts, metadatas=metadatas)
-    store.persist()
-
-    st.success("Indexed to shared Chroma store with metadata!")
+    # Delete vector store button (truncate collection instead of deleting files)
+    if st.button("🧹 Clear multi_tenant_docs collection (truncate)"):
+        try:
+            store = get_vectorstore()
+            collection = store._client.get_collection(name="multi_tenant_docs")
+            all_ids = collection.get(ids=None)["ids"]  # Fetch all document ids
+    
+            if all_ids:
+                collection.delete(ids=all_ids)  # Delete all docs by id
+                st.success("multi_tenant_docs collection truncated successfully.")
+            else:
+                st.info("Collection is already empty.")
+    
+            # Clear cached vectorstore in session_state if any
+            if "vectorstore" in st.session_state:
+                del st.session_state["vectorstore"]
+    
+        except Exception as e:
+            st.error(f"Failed to truncate collection: {e}")
+    
+    
+    
+    
+    
+        file = st.file_uploader("Upload PDF or TXT", type=["pdf","txt"])
+        if not file:
+            return
+    
+        comp = st.session_state.company_id
+        data_dir = Path(f"data/{comp}")
+        data_dir.mkdir(parents=True, exist_ok=True)
+        path = data_dir/file.name
+        path.write_bytes(file.read())
+        st.success(f"Saved {file.name} for {comp}")
+    
+        # Load & split
+        loader = PyPDFLoader(str(path)) if path.suffix == ".pdf" else TextLoader(str(path))
+        docs = loader.load()
+        splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+        chunks = splitter.split_documents(docs)
+    
+        texts = [chunk.page_content for chunk in chunks]
+        metadatas = [{**chunk.metadata, "company": comp} for chunk in chunks]
+    
+        # Add to Chroma
+        store = get_vectorstore()
+        store.add_texts(texts=texts, metadatas=metadatas)
+        store.persist()
+    
+        st.success("Indexed to shared Chroma store with metadata!")
 
 
 def page_query():
