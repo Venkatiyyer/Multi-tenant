@@ -82,7 +82,7 @@ def page_upload():
         st.error("Only uploader can upload files.")
         return
 
-     Delete only files in /tmp/vectorstores/shared_chroma
+     #Delete only files in /tmp/vectorstores/shared_chroma
     if st.button("⚠️ Delete files in shared_chroma"):
         target_dir = Path("/tmp/vectorstores/shared_chroma")
         if target_dir.exists():
