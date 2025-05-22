@@ -43,20 +43,15 @@ for key in ["authenticated", "company_id", "username"]:
 
 # --- Shared multitenant store loader using Chroma ---
 def get_vectorstore():
-    # Use DuckDB+Parquet to avoid SQLite version issues
-    embedder = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
-    PERSIST_DIR.mkdir(parents=True, exist_ok=True)
-    # client_settings = Settings(
-    #     chroma_db_impl="duckdb+parquet",
-    #     persist_directory=str(PERSIST_DIR)
-    # )
-    return Chroma(
-        persist_directory=str(PERSIST_DIR),    
-        
-        embedding_function=embedder,
-        collection_name="multi_tenant_docs",
-        # client_settings=client_settings,
-    )
+    if "vectorstore" not in st.session_state:
+        embedder = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
+        st.session_state.vectorstore = Chroma(
+            persist_directory=str(PERSIST_DIR),
+            embedding_function=embedder,
+            collection_name="multi_tenant_docs",
+        )
+    return st.session_state.vectorstore
+
 
 # --- Pages ---
 def page_login():
@@ -84,46 +79,48 @@ def page_upload():
         return
     
     # Delete vector store button
-    # Delete entire /tmp directory (DANGEROUS - use only if you understand the impact)
-
     if st.button("🧹 Clear Chroma vector, metadata & index files only"):
-        chroma_data_dir = PERSIST_DIR  # Correct usage of defined constant
-    
-        # Files to delete directly under shared_chroma/
-        top_level_files = [
-            "chroma.sqlite3",
-            "chroma.sqlite3-wal",
-            "chroma.sqlite3-shm",
-            "chroma-embeddings.parquet",
-            "chroma-collections.parquet",
-        ]
-    
-        deleted_any = False
-    
-        for filename in top_level_files:
-            file_path = chroma_data_dir / filename
-            if file_path.exists():
+    chroma_data_dir = PERSIST_DIR  # Your official path
+
+    top_level_files = [
+        "chroma.sqlite3",
+        "chroma.sqlite3-wal",
+        "chroma.sqlite3-shm",
+        "chroma-embeddings.parquet",
+        "chroma-collections.parquet",
+    ]
+
+    deleted_any = False
+
+    for filename in top_level_files:
+        file_path = chroma_data_dir / filename
+        if file_path.exists():
+            try:
+                file_path.unlink()
+                deleted_any = True
+            except Exception as e:
+                st.warning(f"Failed to delete {filename}: {e}")
+
+    # Delete all files inside the index folder
+    index_dir = chroma_data_dir / "index" / "multi_tenant_docs"
+    if index_dir.exists():
+        for file in index_dir.glob("*"):
+            if file.is_file():
                 try:
-                    file_path.unlink()
+                    file.unlink()
                     deleted_any = True
                 except Exception as e:
-                    st.warning(f"Failed to delete {filename}: {e}")
-    
-        # Also delete all files inside the index folder for this collection
-        index_dir = chroma_data_dir / "index" / "multi_tenant_docs"
-        if index_dir.exists():
-            for file in index_dir.glob("*"):
-                if file.is_file():
-                    try:
-                        file.unlink()
-                        deleted_any = True
-                    except Exception as e:
-                        st.warning(f"Could not delete index file {file.name}: {e}")
-    
-        if deleted_any:
-            st.success("Chroma vector, metadata, and index files have been deleted.")
-        else:
-            st.info("No relevant Chroma files found to delete.")
+                    st.warning(f"Could not delete index file {file.name}: {e}")
+
+    # ⚠️ Manually clear in-memory Chroma store (workaround)
+    if "vectorstore" in st.session_state:
+        del st.session_state["vectorstore"]
+
+    if deleted_any:
+        st.success("Chroma vector, metadata, and index files deleted.")
+    else:
+        st.info("No relevant Chroma files found to delete.")
+
 
 
 
