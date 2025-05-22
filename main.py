@@ -83,18 +83,18 @@ def page_upload():
         return
 
      # Delete only files in /tmp/vectorstores/shared_chroma
-    if st.button("⚠️ Delete files in shared_chroma"):
-        target_dir = Path("/tmp/vectorstores/shared_chroma")
-        if target_dir.exists():
-            for item in target_dir.iterdir():
-                try:
-                    if item.is_file() or item.is_symlink():
-                        item.unlink()
-                except Exception as e:
-                    st.warning(f"Could not delete {item.name}: {e}")
-            st.success("All files in shared_chroma were deleted (directories preserved).")
-        else:
-            st.info("shared_chroma directory does not exist.")
+    # if st.button("⚠️ Delete files in shared_chroma"):
+    #     target_dir = Path("/tmp/vectorstores/shared_chroma")
+    #     if target_dir.exists():
+    #         for item in target_dir.iterdir():
+    #             try:
+    #                 if item.is_file() or item.is_symlink():
+    #                     item.unlink()
+    #             except Exception as e:
+    #                 st.warning(f"Could not delete {item.name}: {e}")
+    #         st.success("All files in shared_chroma were deleted (directories preserved).")
+    #     else:
+    #         st.info("shared_chroma directory does not exist.")
 
     file = st.file_uploader("Upload PDF or TXT", type=["pdf", "txt"])
     if not file:
