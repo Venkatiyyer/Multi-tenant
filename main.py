@@ -82,8 +82,8 @@ def page_upload():
         st.error("Only uploader can upload files.")
         return
 
-     # Extract company ID early
-    comp = st.session_state.company_id
+    #  # Extract company ID early
+    # comp = st.session_state.company_id
     
     # Delete only the "multi_tenant_docs" collection from Chroma
     if st.button("⚠️ Delete multi_tenant_docs collection"):
