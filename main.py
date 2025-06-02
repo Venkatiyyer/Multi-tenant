@@ -152,7 +152,7 @@ def page_query():
         search_kwargs={"k": 5, "filter": {"company": comp}}
     )
 
-    llm = ChatGroq(model_name="llama-3.3-70b-versatile", temperature=0.2, api_key=groq_api_key)
+    llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.2, api_key=groq_api_key)
     qa = RetrievalQA.from_chain_type(
         llm=llm,
         retriever=retriever,
